@@ -9,7 +9,7 @@ const Persons = ({persons,search}) => {
              .map(person => <p key={person.name}> {person.name} {person.number} </p>
              )
              : 
-             <p>No results</p>
+             <p>No entries</p>
           }
         </>
     )
