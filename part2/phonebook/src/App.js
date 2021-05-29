@@ -10,27 +10,46 @@ const App = () => {
   const [newNum,setNewNum] = useState('');
   const [search,setSearch] = useState('');
   
-  const {getAll,create,deleteEntry} = personService;
+  const {getAll,create,deleteEntry,updateEntry} = personService;
 
   // ADD
   const handleNameSubmit = (e) => {
     e.preventDefault();
-    const isAdd = persons.filter(person => person.name.toLowerCase() === newName.toLowerCase())
-    if(isAdd.length > 0){
-      return alert(`${newName} is already added to phonebook`);
-    }
-    const newEntry = {name : newName,number : newNum}
+    const matched = persons.filter(person => person.name.toLowerCase() === newName.toLowerCase())
 
+    if(matched.length > 0){
+      console.log(matched[0].number,newNum);
+      if(matched[0].number !== newNum){
+        if(window.confirm(`${matched[0].name} is already added to phonebook, replace the old number with a new one?`)){
+          updateNum(matched[0].id);
+          return ;
+        }
+        else{
+          return ;
+        }
+      }
+    }
+
+    const newEntry = {name : newName,number : newNum}
     create(newEntry)
     .then((newPerson)=>{
-      // console.log(response.data);
       setPersons(persons => [...persons,newPerson])
     })
 
     setNewName('')
     setNewNum('')
   }
-  
+
+
+  // UPDATE 
+  const updateNum = (id) => {
+    const person = persons.find(per => per.id === id);
+    const newEntry = {...person,number:newNum}
+    updateEntry(id,newEntry)
+    .then(data => setPersons(persons.map(per => per.id !== person.id ? per : data)))
+    .catch(err => console.log(err))
+  }
+
   // DELETE
   const handleDelete = (e,person) => {
     const id = person.id;
