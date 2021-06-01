@@ -55,13 +55,24 @@ app.delete('/api/persons/:id',(req,res)=>{
 
 app.post('/api/persons',(req,res)=>{
   const newEntry = req.body;
+  if(!newEntry.name){
+    return res.status(400).json({error : "Name is missing"})
+  }
+  if(!newEntry.number){
+    return res.status(400).json({error : "Number is missing"})
+  }
+  isAdded = persons.filter(person => person.name.toLowerCase() === newEntry.name.toLowerCase())
+  if(isAdded){
+    return res.status(400).json({error : "Name must be unique"});
+  }
+
   if(newEntry){
     newEntry.id = Math.floor(Math.random() * 1000000000)
     res.status(201).json(newEntry);
     persons.push(newEntry);
   }
   else{
-    res.status(500).end();
+    return res.status(500).end();
   }
   
 })
