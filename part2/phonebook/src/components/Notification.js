@@ -1,6 +1,7 @@
 import React from 'react';
 
-const Notification = ({message}) => {
+const Notification = ({message,errMess}) => {
+    console.log(errMess)
     return(
         <>
         {message && 
@@ -8,6 +9,12 @@ const Notification = ({message}) => {
               {message}
           </div>
         }
+        {errMess && 
+          <div className="error">
+              {errMess}
+          </div>
+        }
+
         </>
     )
 }

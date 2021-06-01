@@ -12,6 +12,7 @@ const App = () => {
   const [newNum,setNewNum] = useState('');
   const [search,setSearch] = useState('');
   const [message,setMessage] = useState('');
+  const [errMess,setErrMess] = useState('')
   
   const {getAll,create,deleteEntry,updateEntry} = personService;
 
@@ -31,13 +32,16 @@ const App = () => {
           return ;
         }
       }
+      else{
+        return ;
+      }
     }
 
     const newEntry = {name : newName,number : newNum}
     create(newEntry)
     .then((newPerson)=>{
       setPersons(persons => [...persons,newPerson])
-      setMessage(`Added ${newPerson.name}`)
+      setMessage( `Added ${newPerson.name}`);
 
       setTimeout(()=>{
         setMessage("")
@@ -62,7 +66,12 @@ const App = () => {
         setMessage("")
       },2000)
     })
-    .catch(err => console.log(err))
+    .catch(err=> {
+      setErrMess(`Information of ${person.name} has already been removed from server`)
+      setTimeout(()=>{
+        setErrMess('')
+      },2000)
+    })
   }
 
   // DELETE
@@ -73,7 +82,9 @@ const App = () => {
     if(canDelete){
       deleteEntry(id)
       .then(() => setPersons(persons.filter(person=> person.id !== id)))
-      .catch(err=> console.log(err))
+      .catch(err=> {
+        setErrMess(`Information of ${person.name} has already been removed from server`)
+      })
     }
   }
 
@@ -89,7 +100,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message}/>
+      <Notification message={message} errMess={errMess}/>
       <Filter setSearch={setSearch} search={search}/>
       <h3>add a new</h3>
       <PersonForm setNewName={setNewName} setNewNum={setNewNum} newName={newName} newNum={newNum} handleNameSubmit={handleNameSubmit} />
