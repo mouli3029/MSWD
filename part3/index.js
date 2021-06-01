@@ -28,8 +28,21 @@ app.get('/',(req,res)=>{
     res.send('<h1> Phone Book  </h1>')
 })
 
+// GET ALL
 app.get('/api/persons',(req,res)=>{
     res.json(persons);
+})
+
+// GET BY ID
+app.get('/api/persons/:id',(req,res)=>{
+  const id = req.params.id;
+  const person = persons.find(person => person.id === parseInt(id))
+  if(person){
+    res.status(200).json(person);
+  }
+  else{
+    res.status(404).end();
+  }
 })
 
 app.get('/info',(req,res)=>{
