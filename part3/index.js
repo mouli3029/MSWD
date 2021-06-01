@@ -53,6 +53,19 @@ app.delete('/api/persons/:id',(req,res)=>{
   res.status(204).end();
 })
 
+app.post('/api/persons',(req,res)=>{
+  const newEntry = req.body;
+  if(newEntry){
+    newEntry.id = Math.floor(Math.random() * 1000000000)
+    res.status(201).json(newEntry);
+    persons.push(newEntry);
+  }
+  else{
+    res.status(500).end();
+  }
+  
+})
+
 app.get('/info',(req,res)=>{
   const date = new Date();
   res.send(`<p> Phonebook has info for ${persons.length} people</p> <p> ${date} </p>`)
