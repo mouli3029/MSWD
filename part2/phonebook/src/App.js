@@ -3,13 +3,15 @@ import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import personService from '../src/services/persons';
-import './App/css'
+import './App.css'
+import Notification from './components/Notification';
 
 const App = () => {
   const [persons, setPersons ] = useState([]) 
   const [newName, setNewName ] = useState('');
   const [newNum,setNewNum] = useState('');
   const [search,setSearch] = useState('');
+  const [message,setMessage] = useState('');
   
   const {getAll,create,deleteEntry,updateEntry} = personService;
 
@@ -35,6 +37,11 @@ const App = () => {
     create(newEntry)
     .then((newPerson)=>{
       setPersons(persons => [...persons,newPerson])
+      setMessage(`Added ${newPerson.name}`)
+
+      setTimeout(()=>{
+        setMessage("")
+      },2000)
     })
 
     setNewName('')
@@ -47,7 +54,14 @@ const App = () => {
     const person = persons.find(per => per.id === id);
     const newEntry = {...person,number:newNum}
     updateEntry(id,newEntry)
-    .then(data => setPersons(persons.map(per => per.id !== person.id ? per : data)))
+    .then(data => {
+      setPersons(persons.map(per => per.id !== person.id ? per : data))
+      setMessage(`Updated ${data.name}`)
+
+      setTimeout(()=>{
+        setMessage("")
+      },2000)
+    })
     .catch(err => console.log(err))
   }
 
@@ -75,6 +89,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter setSearch={setSearch} search={search}/>
       <h3>add a new</h3>
       <PersonForm setNewName={setNewName} setNewNum={setNewNum} newName={newName} newNum={newNum} handleNameSubmit={handleNameSubmit} />

@@ -1,13 +1,15 @@
 import React from 'react';
 
-const Notification = ({errorMessage}) => {
+const Notification = ({message}) => {
     return(
         <>
-        {errorMessage && 
+        {message && 
           <div className="success">
-              {errorMessage}
+              {message}
           </div>
         }
         </>
     )
 }
+
+export default Notification;
