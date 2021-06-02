@@ -3,7 +3,17 @@ const morgan = require('morgan');
 const app = express();
 
 app.use(express.json())
-app.use(morgan())
+
+
+morgan.token('postData', function (req){
+	if(req.method === 'POST')
+		return JSON.stringify({name : req.body.name ,number : req.body.number})
+	else
+		return ''
+})
+morgan.format('format',':method :url :status :res[content-length] - :response-time ms :postData')
+app.use(morgan('format'))
+
 let persons = [{
     "name": "Arto Hellas",
     "number": "040-123456",
@@ -64,7 +74,7 @@ app.post('/api/persons',(req,res)=>{
     return res.status(400).json({error : "Number is missing"})
   }
   isAdded = persons.filter(person => person.name.toLowerCase() === newEntry.name.toLowerCase())
-  if(isAdded){
+  if(isAdded.length !== 0){
     return res.status(400).json({error : "Name must be unique"});
   }
 
