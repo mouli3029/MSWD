@@ -2,13 +2,14 @@ const express = require('express')
 const morgan = require('morgan');
 const cors = require('cors')
 
+const Person = require('./models/person')
+
 const app = express();
 
+// MiddleWares 
 app.use(express.json())
 app.use(cors())
-
 app.use(express.static('build'))
-
 morgan.token('postData', function (req){
 	if(req.method === 'POST')
 		return JSON.stringify({name : req.body.name ,number : req.body.number})
@@ -18,7 +19,7 @@ morgan.token('postData', function (req){
 morgan.format('format',':method :url :status :res[content-length] - :response-time ms :postData')
 app.use(morgan('format'))
 
-let persons = [{
+/* let persons = [{
     "name": "Arto Hellas",
     "number": "040-123456",
     "id": 1
@@ -38,15 +39,20 @@ let persons = [{
     "number": "39-23-6423122",
     "id": 4
   }
-]
+] */
 
+// Routes
 app.get('/',(req,res)=>{
     res.send('<h1> Phone Book  </h1>')
 })
 
 // GET ALL
 app.get('/api/persons',(req,res)=>{
+  Person.find({})
+  .then((persons)=>{
     res.json(persons);
+    console.log(persons)
+  })
 })
 
 // GET BY ID
@@ -71,22 +77,30 @@ app.delete('/api/persons/:id',(req,res)=>{
 
 app.post('/api/persons',(req,res)=>{
   const newEntry = req.body;
-  if(!newEntry.name){
+/*  if(!newEntry.name){
     return res.status(400).json({error : "Name is missing"})
   }
   if(!newEntry.number){
     return res.status(400).json({error : "Number is missing"})
-  }
+  } 
   isAdded = persons.filter(person => person.name.toLowerCase() === newEntry.name.toLowerCase())
   if(isAdded.length !== 0){
     return res.status(400).json({error : "Name must be unique"});
   }
-
-  if(newEntry){
-    newEntry.id = Math.floor(Math.random() * 1000000000)
-    res.status(201).json(newEntry);
-    persons.push(newEntry);
-  }
+  */
+ if(newEntry.name !== undefined && newEntry.number !== undefined){
+   const person = new Person({
+     name : newEntry.name,
+     number : newEntry.number,
+   })
+   person.save()
+   .then(result => {
+     console.log(result);
+   })
+   .catch(err => {
+     console.log(err)
+   })
+ }
   else{
     return res.status(500).end();
   }
