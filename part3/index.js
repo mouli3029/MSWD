@@ -2,7 +2,8 @@ const express = require('express')
 const morgan = require('morgan');
 const cors = require('cors')
 
-const Person = require('./models/person')
+const Person = require('./models/person');
+const { response } = require('express');
 
 const app = express();
 
@@ -31,20 +32,19 @@ app.get('/api/persons',(req,res)=>{
   Person.find({})
   .then((persons)=>{
     res.json(persons);
-    console.log(persons)
   })
 })
 
 // GET BY ID
 app.get('/api/persons/:id',(req,res)=>{
-  const id = req.params.id;
-  const person = persons.find(person => person.id === parseInt(id))
-  if(person){
-    res.status(200).json(person);
-  }
-  else{
-    res.status(404).end();
-  }
+  Person.findById(req.params.id)
+  .then(person => {
+    if(person){
+      res.status(200).json(person);
+    }
+    res.status(400).end();
+  })
+  .catch(error => next(error))
 })
 
 // DELETE
@@ -56,20 +56,23 @@ app.delete('/api/persons/:id',(req,res,next)=>{
   })
   .catch(error => next(error))
 })
+// PUT
+app.put('/api/persons/:id',(req,res)=>{
+  const body = req.body;
+  const person = {
+    name : body.name,
+    number : body.number,
+  }
+  Person.findByIdAndUpdate(req.params.id,person,{new : true})
+  .then(result => {
+    res.json(result)
+  })
+  .catch(error => next(error))
+})
 
+// POST
 app.post('/api/persons',(req,res)=>{
   const newEntry = req.body;
-/*  if(!newEntry.name){
-    return res.status(400).json({error : "Name is missing"})
-  }
-  if(!newEntry.number){
-    return res.status(400).json({error : "Number is missing"})
-  } 
-  isAdded = persons.filter(person => person.name.toLowerCase() === newEntry.name.toLowerCase())
-  if(isAdded.length !== 0){
-    return res.status(400).json({error : "Name must be unique"});
-  }
-  */
  if(newEntry.name !== undefined && newEntry.number !== undefined){
    const person = new Person({
      name : newEntry.name,
@@ -77,10 +80,10 @@ app.post('/api/persons',(req,res)=>{
    })
    person.save()
    .then(result => {
-     console.log(result);
+     res.json(result)
    })
    .catch(err => {
-     console.log(err)
+     next(error)
    })
  }
   else{
@@ -90,7 +93,9 @@ app.post('/api/persons',(req,res)=>{
 
 app.get('/info',(req,res)=>{
   const date = new Date();
-  res.send(`<p> Phonebook has info for ${persons.length} people</p> <p> ${date} </p>`)
+  Person.find({}).then(persons => {
+    res.send(`<p> Phonebook has info for ${persons.length} people</p> <p> ${date} </p>`)
+  })
 })
 
 const errorHandler = (error,req,res,next) => {
