@@ -19,27 +19,7 @@ morgan.token('postData', function (req){
 morgan.format('format',':method :url :status :res[content-length] - :response-time ms :postData')
 app.use(morgan('format'))
 
-/* let persons = [{
-    "name": "Arto Hellas",
-    "number": "040-123456",
-    "id": 1
-  },
-  {
-    "name": "Ada Lovelace",
-    "number": "39-44-5323523",
-    "id": 2
-  },
-  {
-    "name": "Dan Abramov",
-    "number": "12-43-234345",
-    "id": 3
-  },
-  {
-    "name": "Mary Poppendieck",
-    "number": "39-23-6423122",
-    "id": 4
-  }
-] */
+
 
 // Routes
 app.get('/',(req,res)=>{
@@ -68,11 +48,13 @@ app.get('/api/persons/:id',(req,res)=>{
 })
 
 // DELETE
-app.delete('/api/persons/:id',(req,res)=>{
-  const id = parseInt(req.params.id)
-  persons = persons.filter(person => person.id !== id)
-  
-  res.status(204).end();
+app.delete('/api/persons/:id',(req,res,next)=>{
+  Person.findByIdAndRemove(req.params.id)
+  .then(result => {
+    res.status(204).end();
+    console.log(result);
+  })
+  .catch(error => next(error))
 })
 
 app.post('/api/persons',(req,res)=>{
@@ -104,13 +86,21 @@ app.post('/api/persons',(req,res)=>{
   else{
     return res.status(500).end();
   }
-  
 })
 
 app.get('/info',(req,res)=>{
   const date = new Date();
   res.send(`<p> Phonebook has info for ${persons.length} people</p> <p> ${date} </p>`)
 })
+
+const errorHandler = (error,req,res,next) => {
+  console.error(error.message);
+  if(error.name === 'CastError'){
+    return res.status(400).send({error : "malformatted id"})
+  }
+  next(error)
+}
+app.use(errorHandler)
 const PORT = process.env.PORT || 3001
 app.listen(PORT,()=>{
     console.log(`Server is running at http://localhost:${PORT}/`);
