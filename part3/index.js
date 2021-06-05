@@ -3,7 +3,6 @@ const morgan = require('morgan');
 const cors = require('cors')
 
 const Person = require('./models/person');
-const { response } = require('express');
 
 const app = express();
 
@@ -36,7 +35,7 @@ app.get('/api/persons',(req,res)=>{
 })
 
 // GET BY ID
-app.get('/api/persons/:id',(req,res)=>{
+app.get('/api/persons/:id',(req,res,next)=>{
   Person.findById(req.params.id)
   .then(person => {
     if(person){
@@ -57,7 +56,7 @@ app.delete('/api/persons/:id',(req,res,next)=>{
   .catch(error => next(error))
 })
 // PUT
-app.put('/api/persons/:id',(req,res)=>{
+app.put('/api/persons/:id',(req,res,next)=>{
   const body = req.body;
   const person = {
     name : body.name,
@@ -71,7 +70,7 @@ app.put('/api/persons/:id',(req,res)=>{
 })
 
 // POST
-app.post('/api/persons',(req,res)=>{
+app.post('/api/persons',(req,res,next)=>{
   const newEntry = req.body;
  if(newEntry.name !== undefined && newEntry.number !== undefined){
    const person = new Person({
@@ -82,7 +81,7 @@ app.post('/api/persons',(req,res)=>{
    .then(result => {
      res.json(result)
    })
-   .catch(err => {
+   .catch(error => {
      next(error)
    })
  }
@@ -98,14 +97,20 @@ app.get('/info',(req,res)=>{
   })
 })
 
+// Error handler
 const errorHandler = (error,req,res,next) => {
   console.error(error.message);
   if(error.name === 'CastError'){
     return res.status(400).send({error : "malformatted id"})
   }
+  else if(error.name === 'ValidationError'){
+    return res.status(400).send({error : "Name already exists"})
+  }
   next(error)
 }
 app.use(errorHandler)
+
+// Connection
 const PORT = process.env.PORT || 3001
 app.listen(PORT,()=>{
     console.log(`Server is running at http://localhost:${PORT}/`);
