@@ -18,9 +18,14 @@ const  PersonSchema = mongoose.Schema({
     name : {
         type : String,
         required : true,
-        unique : true
+        unique : true,
+        minlength : 3,
     },
-    number : Number,
+    number : {
+        type : String,
+        required : true,
+        minlength : 8,
+    },
 })
 
 PersonSchema.set('toJSON',{

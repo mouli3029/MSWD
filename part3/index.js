@@ -62,7 +62,7 @@ app.put('/api/persons/:id',(req,res,next)=>{
     name : body.name,
     number : body.number,
   }
-  Person.findByIdAndUpdate(req.params.id,person,{new : true})
+  Person.findByIdAndUpdate(req.params.id,person,{runValidators : true},{new : true})
   .then(result => {
     res.json(result)
   })
@@ -99,12 +99,15 @@ app.get('/info',(req,res)=>{
 
 // Error handler
 const errorHandler = (error,req,res,next) => {
-  console.error(error.message);
   if(error.name === 'CastError'){
     return res.status(400).send({error : "malformatted id"})
   }
   else if(error.name === 'ValidationError'){
-    return res.status(400).send({error : "Name already exists"})
+    console.log(error.message)
+    return res.status(400).send({error : error.message})
+  }
+  else if(error.name === 'MongooseError'){
+    return res.status(400).send({error : "Update should have min 3 characters of name and 8 characters of number"})
   }
   next(error)
 }
