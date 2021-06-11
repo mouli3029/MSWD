@@ -1,6 +1,8 @@
+
 const dummy = (blogs) => {
     return 1;
 }
+
 const totalLikes = (blogs) => {
     let totallikes;
     blogs.length === 0 ? 
@@ -22,8 +24,46 @@ const favoriteBlog = (blogs) => {
     // return favoriteblog
 }
 
+const mostBlogs = (blogs) => {
+    let countObject = {}
+    blogs.forEach((blog)=>{
+        if(countObject[blog.author] !== undefined){
+            countObject[blog.author] += 1;
+        }
+        else{
+            countObject[blog.author] = 0;
+        }
+    })
+    const maxBlogs = Math.max(...Object.values(countObject))
+    const maxBloggedAuthor = Object.keys(countObject).filter((author)=> countObject[author] === maxBlogs)
+    return{
+        author : maxBloggedAuthor[0],
+        blogs : maxBlogs + 1
+    }
+}
+
+const mostLikes = (blogs) => {
+    let countObject = {}
+    blogs.forEach((blog)=>{
+        if(countObject[blog.author] !== undefined){
+            countObject[blog.author] += blog.likes;
+        }
+        else{
+            countObject[blog.author] = blog.likes;
+        }
+    })
+    const maxLikes = Math.max(...Object.values(countObject))
+    const maxLikedAuthor = Object.keys(countObject).filter((author)=> countObject[author] === maxLikes)
+    return{
+        author : maxLikedAuthor[0],
+        likes : maxLikes
+    }
+}
+
 module.exports = {
     dummy,
     totalLikes,
-    favoriteBlog
+    favoriteBlog,
+    mostBlogs,
+    mostLikes
 }

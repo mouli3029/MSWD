@@ -75,3 +75,23 @@ describe('returns the favourite blog',()=>{
     })
   })
 })
+
+describe('returns the author who has most no of blogs',()=>{
+  test('provided the blogs return the author with most blogs',()=>{
+    const result = listHelper.mostBlogs(blogs)
+    expect(result).toEqual({
+      author: "Robert C. Martin",
+      blogs: 3
+    })
+  })
+})
+
+describe('returns the author who has most no of likes',()=>{
+  test('provided the blogs return the author with most likes',()=>{
+    const result = listHelper.mostLikes(blogs)
+    expect(result).toEqual({
+      author: "Edsger W. Dijkstra",
+      likes: 17
+    })
+  })
+})
