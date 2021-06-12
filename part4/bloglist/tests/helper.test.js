@@ -48,7 +48,7 @@ const blogs = [
     url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
     likes: 2,
     __v: 0
-  }  
+  }
 ]
 
 test('dummy returns one', () => {
@@ -59,14 +59,14 @@ test('dummy returns one', () => {
 })
 
 describe('total likes', () => {
-  
-    test('when list has only one blog, equals the likes of that', () => {
-      const result = listHelper.totalLikes(blogs)
-      expect(result).toBe(36)
-    })
+
+  test('when list has only one blog, equals the likes of that', () => {
+    const result = listHelper.totalLikes(blogs)
+    expect(result).toBe(36)
+  })
 })
-describe('returns the favourite blog',()=>{
-  test('returns the favourite blog',()=>{
+describe('returns the favourite blog', () => {
+  test('returns the favourite blog', () => {
     const result = listHelper.favoriteBlog(blogs)
     expect(result).toEqual({
       title: "Canonical string reduction",
@@ -76,8 +76,8 @@ describe('returns the favourite blog',()=>{
   })
 })
 
-describe('returns the author who has most no of blogs',()=>{
-  test('provided the blogs return the author with most blogs',()=>{
+describe('returns the author who has most no of blogs', () => {
+  test('provided the blogs return the author with most blogs', () => {
     const result = listHelper.mostBlogs(blogs)
     expect(result).toEqual({
       author: "Robert C. Martin",
@@ -86,8 +86,8 @@ describe('returns the author who has most no of blogs',()=>{
   })
 })
 
-describe('returns the author who has most no of likes',()=>{
-  test('provided the blogs return the author with most likes',()=>{
+describe('returns the author who has most no of likes', () => {
+  test('provided the blogs return the author with most likes', () => {
     const result = listHelper.mostLikes(blogs)
     expect(result).toEqual({
       author: "Edsger W. Dijkstra",
