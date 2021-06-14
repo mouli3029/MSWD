@@ -46,14 +46,14 @@ describe('HTTP GET TESTING', () => {
             url: "https://reactrouter.com/",
         }
         await api.post('/api/blogs')
+            .send(newBlogWithNoLikes)
             .expect(201)
             .expect('Content-Type', /application\/json/)
 
         const response = await api.get('/api/blogs')
 
-        const noLikesBlog = response.body.filter(blog => blog.likes === 0)
-        // '2' :  Since already  a blog with zero likes.
-        expect(noLikesBlog).toHaveLength(2);
+        const noLikesBlog = response.body.filter(blog => blog.title === "React Router")
+        expect(noLikesBlog[0].likes).toBe(0);
     })
 })
 
@@ -73,6 +73,17 @@ describe('HTTP POST Testing', () => {
         const response = await api.get('/api/blogs')
         const titles = response.body.map(b => b.title)
         expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+    })
+
+    test('test that verifies that if the title and url properties are missing it returns 400 status code', async () => {
+        const newBlog = {
+            "likes": 0,
+            "url": "htpps://mouli.com"
+        }
+
+        await api.post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
     })
 })
 
