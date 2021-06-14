@@ -38,6 +38,23 @@ describe('HTTP GET TESTING', () => {
         const response = await api.get('/api/blogs')
         expect(response.body[0].id).toBeDefined();
     })
+
+    test('test that verifies that if the likes property is missing from the request', async () => {
+        const newBlogWithNoLikes = {
+            title: "React Router",
+            author: "Mouli",
+            url: "https://reactrouter.com/",
+        }
+        await api.post('/api/blogs')
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
+
+        const response = await api.get('/api/blogs')
+
+        const noLikesBlog = response.body.filter(blog => blog.likes === 0)
+        // '2' :  Since already  a blog with zero likes.
+        expect(noLikesBlog).toHaveLength(2);
+    })
 })
 
 describe('HTTP POST Testing', () => {
