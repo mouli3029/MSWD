@@ -6,6 +6,7 @@ const config = require('./utils/config')
 const logger = require('./utils/logger');
 const middleware = require('./utils/middleware')
 const blogRouter = require('./controllers/blog')
+const UserRouter = require('./controllers/user')
 
 
 mongoose.connect(config.MONGODB_URI,{useNewUrlParser : true,useCreateIndex:true,useFindAndModify:false,useUnifiedTopology:true})
@@ -22,8 +23,8 @@ app.use(express.json())
 app.use(middleware.requestLogger)
 
 // Routes :
-app.use('/api/blogs',blogRouter)
-
+app.use('/api/blogs',blogRouter);
+app.use('/api/users',UserRouter);
 
 // Error handlers thrown by routeHandlers
 app.use(middleware.unknownEndpoint)
